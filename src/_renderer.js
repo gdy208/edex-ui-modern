@@ -54,12 +54,12 @@ window.shortcuts = require(shortcutsFile);
 window.lastWindowState = require(lastWindowStateFile);
 
 // Load CLI parameters
-if (remote.process.argv.includes("--nointro")) {
+if (process.argv.includes("--nointro")) {
     window.settings.nointroOverride = true;
 } else {
     window.settings.nointroOverride = false;
 }
-if (remote.process.argv.includes("--nocursor")) {
+if (process.argv.includes("--nocursor")) {
     window.settings.nocursorOverride = true;
 } else {
     window.settings.nocursorOverride = false;
@@ -799,7 +799,7 @@ window.openSettings = async () => {
                 <h6 id="settingsEditorStatus">Loaded values from memory</h6>
                 <br>`,
         buttons: [
-            {label: "Open in External Editor", action:`remote.shell.openPath('${settingsFile}');electronWin.minimize();`},
+            {label: "Open in External Editor", action:`electron.shell.openPath('${settingsFile}');electronWin.minimize();`},
             {label: "Save to Disk", action: "window.writeSettingsFile()"},
             {label: "Reload UI", action: "window.location.reload(true);"},
             {label: "Restart eDEX", action: "remote.app.relaunch();remote.app.quit();"}
@@ -943,7 +943,7 @@ window.openShortcutsHelp = () => {
                 </details>
                 <br>`,
         buttons: [
-            {label: "Open Shortcuts File", action:`remote.shell.openPath('${shortcutsFile}');electronWin.minimize();`},
+            {label: "Open Shortcuts File", action:`electron.shell.openPath('${shortcutsFile}');electronWin.minimize();`},
             {label: "Reload UI", action: "window.location.reload(true);"},
         ]
     }, () => {
