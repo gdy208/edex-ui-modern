@@ -18,6 +18,8 @@ if (cluster.isPrimary) {
     let workers = [];
     cluster.on("fork", worker => {
         workers.push(worker.id);
+        // Handle worker IPC errors gracefully
+        worker.on('error', () => {});
     });
 
     for (let i = 0; i < numCPUs; i++) {
@@ -32,11 +34,15 @@ if (cluster.isPrimary) {
         let selectedID = lastID+1;
         if (selectedID > numCPUs-1) selectedID = 0;
 
-        cluster.workers[workers[selectedID]].send(JSON.stringify({
-            id,
-            type,
-            arg
-        }));
+        try {
+            cluster.workers[workers[selectedID]].send(JSON.stringify({
+                id,
+                type,
+                arg
+            }));
+        } catch(e) {
+            // Worker disconnected, skip
+        }
 
         lastID = selectedID;
     }
@@ -95,4 +101,6 @@ if (cluster.isPrimary) {
     process.on('disconnect', () => {
         process.exit(0);
     });
+    // Catch IPC write errors (EPIPE when parent disconnects mid-send)
+    process.on('error', () => {});
 }
