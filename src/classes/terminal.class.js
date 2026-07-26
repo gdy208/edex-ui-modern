@@ -3,11 +3,11 @@ class Terminal {
         if (opts.role === "client") {
             if (!opts.parentId) throw "Missing options";
 
-            this.xTerm = require("xterm").Terminal;
-            const {AttachAddon} = require("xterm-addon-attach");
-            const {FitAddon} = require("xterm-addon-fit");
-            const {LigaturesAddon} = require("xterm-addon-ligatures");
-            const {WebglAddon} = require("xterm-addon-webgl");
+            this.xTerm = require("@xterm/xterm").Terminal;
+            const {AttachAddon} = require("@xterm/addon-attach");
+            const {FitAddon} = require("@xterm/addon-fit");
+            const {LigaturesAddon} = require("@xterm/addon-ligatures");
+            const {WebglAddon} = require("@xterm/addon-webgl");
             this.Ipc = require("electron").ipcRenderer;
 
             this.port = opts.port || 3000;
@@ -407,11 +407,10 @@ class Terminal {
             }, 1000);
 
             this.tty = this.Pty.spawn(opts.shell || "bash", (opts.params.length > 0 ? opts.params : (process.platform === "win32" ? [] : ["--login"])), {
-                name: opts.env.TERM || "xterm-256color",
                 cols: 80,
                 rows: 24,
                 cwd: opts.cwd || process.env.PWD,
-                env: opts.env || process.env
+                env: Object.assign({}, opts.env || process.env, { TERM: opts.env.TERM || "xterm-256color" })
             });
 
             this.tty.onExit((code, signal) => {
