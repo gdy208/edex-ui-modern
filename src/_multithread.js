@@ -86,14 +86,11 @@ if (cluster.isPrimary) {
     process.on("message", msg => {
         msg = JSON.parse(msg);
         si[msg.type](msg.arg).then(res => {
-            try {
-                process.send(JSON.stringify({
-                    id: msg.id,
-                    res
-                }));
-            } catch(e) {
-                // Parent process closed, EPIPE is expected
-            }
+            // Use callback-style send to properly handle IPC errors
+            process.send(JSON.stringify({
+                id: msg.id,
+                res
+            }), () => {}); // EPIPE callback — parent already gone
         });
     });
 
@@ -101,6 +98,4 @@ if (cluster.isPrimary) {
     process.on('disconnect', () => {
         process.exit(0);
     });
-    // Catch IPC write errors (EPIPE when parent disconnects mid-send)
-    process.on('error', () => {});
 }
