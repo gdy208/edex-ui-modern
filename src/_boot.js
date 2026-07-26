@@ -215,8 +215,10 @@ function createWindow(settings) {
         require('fs').writeFileSync('/tmp/edex-loadfail.txt', code + ' ' + desc);
         console.error('LOAD FAILED:', code, desc);
     });
-    // Open DevTools to see console errors
-    win.webContents.openDevTools({ mode: 'detach' });
+    // Open DevTools on --devtools flag (debug mode)
+    if (process.argv.includes('--devtools')) {
+        win.webContents.openDevTools({ mode: 'detach' });
+    }
 
     win.loadURL(url.format({
         pathname: path.join(__dirname, 'ui.html'),
