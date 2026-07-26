@@ -386,9 +386,9 @@ async function initUI() {
 
     getDisplayName().then(user => {
         if (user) {
-            greeter.innerHTML += `Welcome back, <em>${user}</em>`;
+            greeter.innerHTML += `Bon retour, <em>${user}</em>`;
         } else {
-            greeter.innerHTML += "Welcome back";
+            greeter.innerHTML += "Bon retour";
         }
     });
 
