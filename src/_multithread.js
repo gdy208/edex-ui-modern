@@ -80,10 +80,19 @@ if (cluster.isPrimary) {
     process.on("message", msg => {
         msg = JSON.parse(msg);
         si[msg.type](msg.arg).then(res => {
-            process.send(JSON.stringify({
-                id: msg.id,
-                res
-            }));
+            try {
+                process.send(JSON.stringify({
+                    id: msg.id,
+                    res
+                }));
+            } catch(e) {
+                // Parent process closed, EPIPE is expected
+            }
         });
+    });
+
+    // Gracefully handle parent disconnect (no unhandled EPIPE)
+    process.on('disconnect', () => {
+        process.exit(0);
     });
 }
