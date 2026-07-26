@@ -9,5 +9,5 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use
 nvm use 20 >/dev/null 2>&1
 
-# Lancer eDEX-UI (GPU désactivé pour compatibilité Intel/Mesa)
-exec "$SCRIPT_DIR/node_modules/.bin/electron" "$SCRIPT_DIR/src" --disable-gpu "$@"
+# Lancer eDEX-UI
+exec "$SCRIPT_DIR/node_modules/.bin/electron" "$SCRIPT_DIR/src" "$@"
