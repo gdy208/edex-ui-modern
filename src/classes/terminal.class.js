@@ -6,8 +6,12 @@ class Terminal {
             this.xTerm = require("@xterm/xterm").Terminal;
             const {AttachAddon} = require("@xterm/addon-attach");
             const {FitAddon} = require("@xterm/addon-fit");
-            const {LigaturesAddon} = require("@xterm/addon-ligatures");
             const {WebglAddon} = require("@xterm/addon-webgl");
+            // LigaturesAddon loaded async via ESM dynamic import (module is ESM-only in v0.10+)
+            this._ligaturesAddonPromise = (async () => {
+                const mod = await import("@xterm/addon-ligatures");
+                return new mod.LigaturesAddon();
+            })();
             this.Ipc = require("electron").ipcRenderer;
 
             this.port = opts.port || 3000;
@@ -139,8 +143,10 @@ class Terminal {
             this.term.loadAddon(fitAddon);
             this.term.open(document.getElementById(opts.parentId));
             this.term.loadAddon(new WebglAddon());
-            let ligaturesAddon = new LigaturesAddon();
-            this.term.loadAddon(ligaturesAddon);
+            // Load ligatures addon asynchronously (ESM dynamic import)
+            this._ligaturesAddonPromise.then(addon => {
+                this.term.loadAddon(addon);
+            }).catch(() => {}); // Graceful fallback: ligatures are cosmetic
             this.term.attachCustomKeyEventHandler(e => {
                 window.keyboard.keydownHandler(e);
                 return true;
