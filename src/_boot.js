@@ -205,6 +205,19 @@ function createWindow(settings) {
 
     remoteMain.enable(win.webContents);
 
+    // DIAGNOSTIC: Capture renderer crashes
+    win.webContents.on('render-process-gone', (event, details) => {
+        const crash = { reason: details.reason, exitCode: details.exitCode };
+        require('fs').writeFileSync('/tmp/edex-crash.json', JSON.stringify(crash, null, 2));
+        console.error('RENDERER CRASHED:', JSON.stringify(crash));
+    });
+    win.webContents.on('did-fail-load', (event, code, desc) => {
+        require('fs').writeFileSync('/tmp/edex-loadfail.txt', code + ' ' + desc);
+        console.error('LOAD FAILED:', code, desc);
+    });
+    // Open DevTools to see console errors
+    win.webContents.openDevTools({ mode: 'detach' });
+
     win.loadURL(url.format({
         pathname: path.join(__dirname, 'ui.html'),
         protocol: 'file:',

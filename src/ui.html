@@ -5,6 +5,25 @@
         <meta http-equiv="Content-Security-Policy" content="default-src file: 'unsafe-inline'; img-src file: data:; media-src file:; connect-src ws: file:">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>eDEX-UI</title>
+        <script>
+            // DIAGNOSTIC: Capture all renderer errors before anything else loads
+            window.onerror = function(msg, src, line, col, err) {
+                var log = 'RENDERER ERROR: ' + msg + '\n  at ' + src + ':' + line + ':' + col + '\n' + (err ? err.stack : '');
+                console.error(log);
+                try {
+                    var fs = require('fs');
+                    fs.appendFileSync('/tmp/edex-renderer-errors.log', log + '\n---\n');
+                } catch(e) {}
+            };
+            window.addEventListener('unhandledrejection', function(e) {
+                var log = 'UNHANDLED REJECTION: ' + e.reason;
+                console.error(log);
+                try {
+                    var fs = require('fs');
+                    fs.appendFileSync('/tmp/edex-renderer-errors.log', log + '\n---\n');
+                } catch(e) {}
+            });
+        </script>
 
         <!-- Load dependency css -->
         <link rel="stylesheet" href="node_modules/augmented-ui/augmented.css" />
