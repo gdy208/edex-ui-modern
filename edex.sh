@@ -9,5 +9,5 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use
 nvm use 20 >/dev/null 2>&1
 
-# Lancer eDEX-UI
-exec "$SCRIPT_DIR/node_modules/.bin/electron" "$SCRIPT_DIR/src" "$@"
+# Lancer eDEX-UI (GPU in-process pour stabilité Intel)
+exec "$SCRIPT_DIR/node_modules/.bin/electron" "$SCRIPT_DIR/src" --in-process-gpu "$@"
