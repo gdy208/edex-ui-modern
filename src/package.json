@@ -48,6 +48,9 @@
     "which": "~2.0.2",
     "ws": "^8.18.0"
   },
+  "devDependencies": {
+    "electron": "^32.3.0"
+  },
   "optionalDependencies": {
     "osx-temperature-sensor": "^1.0.8"
   }
